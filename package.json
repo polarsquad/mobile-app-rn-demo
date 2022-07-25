@@ -1,0 +1,15 @@
+{
+  "name": "React-Native-Typescript-demo-app",
+  "version": "1.0.0",
+  "description": "Monorepo for testing CI/CD for React Native app.",
+  "repository": "git@ssh.dev.azure.com:v3/masinplayground/Mobile-app-CICD/Mobile-app-CICD",
+  "author": "Masi Malmi <masi.malmi@365.polarsquad.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "services/*",
+      "clients/*"
+    ]
+  }
+}
