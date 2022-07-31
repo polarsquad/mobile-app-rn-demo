@@ -7,8 +7,9 @@
 ### Install missing prerequisites if neccessary
 
 1. Install Node.js and Yarn
-2. Install XCode from the AppStore
-3. Install the [required tools](./clients/mobile-app/RNTDemoApp/README.md) for running the mobile app locally
+2. Install [PM2](https://poopcode.com/node-js-app-pm2-process-manager/)
+3. Install XCode from the AppStore
+4. Install the [required tools](./clients/mobile-app/RNTDemoApp/README.md) for running the mobile app locally
 
 ### Running locally
 

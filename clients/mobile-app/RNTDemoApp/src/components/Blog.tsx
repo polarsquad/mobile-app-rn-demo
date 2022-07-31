@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   highlight: {
-    color: '#fa5074',
+    color: COLOR.hightlight,
     fontWeight: '600',
   },
   padding: {
@@ -91,19 +91,7 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
-export interface Blog {
-    id: number;
-    title: string;
-    author: string;
-    publishDate: string;
-    imageUrl: string;
-    guidUrl: string;
-    tags: string;
-}
-*/
-
-const Blog = ({blog}) => {
+const BlogItem = ({blog}) => {
   const onPress = async (url: string) => {
     await Linking.canOpenURL(url);
     Linking.openURL(url);
@@ -121,13 +109,14 @@ const Blog = ({blog}) => {
         <View style={styles.textcontainer}>
           <Text style={styles.title}>{blog.title}</Text>
           <Text style={styles.padding}>
-            <Text style={styles.highlight}>Tags</Text>: {blog.tags}
+            <Text style={styles.highlight}>Tags</Text>: {blog.tags.join(', ')}
           </Text>
           <Text style={styles.line}>
             <Text style={styles.highlight}>Author</Text>: {blog.author}
           </Text>
           <Text style={styles.line}>
-            <Text style={styles.highlight}>Date</Text>: {blog.publishDate}
+            <Text style={styles.highlight}>Date</Text>:{' '}
+            {new Date(blog.publishDate.toString()).toLocaleDateString('en-GB')}
           </Text>
         </View>
         <View style={styles.buttoncontainer}>
@@ -142,4 +131,4 @@ const Blog = ({blog}) => {
   );
 };
 
-export default Blog;
+export default BlogItem;

@@ -1,0 +1,19 @@
+{
+  "name": "@ps/common",
+  "version": "1.0.0",
+  "description": "Common library for shared code between TypeScript projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Polar Squad",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "luxon": "^3.0.1",
+    "redis": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.0.0"
+  }
+}

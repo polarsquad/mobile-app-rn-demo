@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -6,9 +7,12 @@ import {
   StatusBar,
   FlatList,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import {COLOR, SPACING} from '../theme';
-import Blog from './Blog';
+import BlogItem from './Blog';
+import type {Blog} from '../../../../../common/src/services/types';
+import {API_URL} from '@env';
 
 const styles = StyleSheet.create({
   maincontainer: {
@@ -46,45 +50,78 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     marginVertical: 20,
   },
+  activityIndicator: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
 });
 
 const Main = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: 'Do you need Kubernetes?',
-      author: 'Risto Laurikainen',
-      publishDate: 'Jun 21, 2021',
-      imageUrl: 'https://cdn-images-1.medium.com/max/1024/0*xHdSIJIR906ShgCz',
-      guidUrl: 'https://medium.com/p/34ae206c2866',
-      tags: 'cloud-computing, devops, kubernetes, containers',
-    },
-    {
-      id: 2,
-      title: 'Why you need a platform team for Kubernetes',
-      author: 'Risto Laurikainen',
-      publishDate: 'Mar 22, 2021',
-      imageUrl: 'https://cdn-images-1.medium.com/max/1024/0*lJd9V9QxeJEK5jRb',
-      guidUrl: 'https://medium.com/p/6235b044bedd',
-      tags: 'information-technology, kubernetes, computing, cloud, teamwork',
-    },
-    {
-      id: 3,
-      title: 'Our willingness to create change sets Polar Squad apart',
-      author: 'Joska Pyykkö',
-      publishDate: 'Mar 22, 2021',
-      imageUrl:
-        'https://cdn-images-1.medium.com/max/1024/1*TXcNnfk-eUOlgnlrz63iwA.jpeg',
-      guidUrl: 'https://medium.com/p/c5769e53b51c',
-      tags: 'devops',
-    },
-  ];
+  const [isLoading, setLoading] = useState(true);
+  let [blogs, setBlogs] = useState<Blog[]>();
+  const [message, setMessage] = useState('');
 
+  //console.log('API_URL: ', API_URL);
+  //const endpoint = API_URL;
+  const headers = {
+    'content-type': 'application/json',
+  };
+  const graphqlQuery = {
+    //operationName: 'allBlogs',
+    query:
+      'query { allBlogs { id, title, author, publishDate, imageUrl, guidUrl, tags } }',
+    variables: {},
+  };
+  const options = {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(graphqlQuery),
+  };
+
+  const fetchBlogs = async () => {
+    let data;
+    try {
+      const response = await fetch(API_URL, options);
+      if (response.status >= 200 && response.status <= 299) {
+        data = await response.json();
+      } else {
+        console.log('HTTP response status: ', response.status);
+        setMessage('Could not load data.');
+        setLoading(false);
+      }
+      //console.log(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      if (data) {
+        setBlogs(data.data.allBlogs);
+        setMessage('');
+        setLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const sortedBlogs = blogs
+    ? blogs.sort(
+        (a, b) =>
+          new Date(b.publishDate.toString()).getTime() -
+          new Date(a.publishDate.toString()).getTime(),
+      )
+    : [];
   const ItemDivider = () => {
     return <View style={styles.separator} />;
   };
 
-  const renderBlog = ({item}) => <Blog blog={item} />;
+  const renderBlog = ({item}) => <BlogItem blog={item} />;
 
   return (
     <SafeAreaView style={styles.maincontainer}>
@@ -96,12 +133,22 @@ const Main = () => {
           Sharing stories from the DevOps world
         </Text>
       </View>
-      <FlatList
-        data={blogs}
-        renderItem={renderBlog}
-        keyExtractor={blog => blog.id}
-        ItemSeparatorComponent={ItemDivider}
+      <ActivityIndicator
+        size="large"
+        color={COLOR.hightlight}
+        animating={isLoading}
+        style={styles.activityIndicator}
       />
+      {message !== '' && <Text>{message}</Text>}
+      {sortedBlogs && (
+        <FlatList
+          data={sortedBlogs}
+          renderItem={renderBlog}
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={ItemDivider}
+          extraData={isLoading}
+        />
+      )}
     </SafeAreaView>
   );
 };

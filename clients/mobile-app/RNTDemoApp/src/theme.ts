@@ -4,6 +4,7 @@ interface ColorTheme {
   surface: string;
   onSurface: string;
   background: string;
+  hightlight: string;
 }
 
 export const COLOR: ColorTheme = {
@@ -12,6 +13,7 @@ export const COLOR: ColorTheme = {
   surface: '#fff',
   onSurface: '#000',
   background: '#000000',
+  hightlight: '#fa5074',
 };
 
 interface SpacingTheme {
