@@ -66,7 +66,7 @@ const Main = () => {
   let [blogs, setBlogs] = useState<Blog[]>();
   const [message, setMessage] = useState('');
 
-  //console.log('API_URL: ', API_URL);
+  console.log('API_URL: ', API_URL);
   //const endpoint = API_URL;
   const headers = {
     'content-type': 'application/json',

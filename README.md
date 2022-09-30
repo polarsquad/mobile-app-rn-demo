@@ -25,7 +25,13 @@ yarn
 (cd services/api && yarn run dev)
 ```
 
-3. Start the React Native process and iOS and/or Android simulator in separate terminals [as instructed here](./clients/mobile-app/RNTDemoApp/README.md)
+3. Start the background worker service (NodeJS app)
+
+```
+(cd services/background-worker && yarn run dev)
+```
+
+4. Start the React Native process and iOS and/or Android simulator in separate terminals [as instructed here](./clients/mobile-app/RNTDemoApp/README.md)
 
 ## Contents of this repository
 
