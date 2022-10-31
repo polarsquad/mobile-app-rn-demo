@@ -10,7 +10,7 @@ yarn
 yarn run react-native doctor
 
 # Run main react-native process
-yarn run start
+yarn run start --reset-cache
 ```
 
 Then, continue in a different shell with the iOS or Android-specific instructions
