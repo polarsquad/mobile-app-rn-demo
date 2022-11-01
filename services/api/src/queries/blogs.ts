@@ -14,7 +14,7 @@ export const getBlogs = async () => {
     }
   );
 
-  //console.log("Existing hashes: ", scanHResults.keys);
+  console.log("Existing hashes: ", scanHResults.keys);
 
   const ids = scanHResults.keys.map(key => {
     return key.substring(key.indexOf(':') + 1);
@@ -35,7 +35,7 @@ export const getBlogs = async () => {
     const tags = await client.sMembers(blogTagsKey(ids[i]));
     const deserialized = deserialize(ids[i], tags, blog);
 
-    //console.log(deserialized);
+    console.log(deserialized);
     
     return deserialized;
   });

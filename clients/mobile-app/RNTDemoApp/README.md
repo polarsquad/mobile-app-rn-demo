@@ -35,3 +35,7 @@ Ensure a virtual device has been set up in Android Studio.
 # Run Android emulator
 yarn run android
 ```
+
+## Known issues
+
+- `react-native-dotenv` caches values, use `--reset-cache` flag when starting main react-native process

@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  # Base image containing shared libraries
+  common:
+    build:
+      context: .
+      dockerfile: common/Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+    image: common:$BUILD_VERSION
+  cache:
+    # Azure redis versions:
+    # https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-how-to-version
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+        BUILD_CONTEXT: api
+    image: api:$BUILD_VERSION
+    depends_on:
+      - common
+      - cache
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PW: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    ports:
+      - 3000:3000
+    links:
+      - cache
+  background-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+        BUILD_CONTEXT: background-worker
+    image: background-worker:$BUILD_VERSION
+    depends_on:
+      - common
+      - cache
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PW: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      CRON_JOB_SCHEDULE: "0 * * * *"
+    ports:
+      - 3002:3002
+    links:
+      - cache
+volumes:
+  cache:
+    driver: local

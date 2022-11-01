@@ -2,12 +2,21 @@
   "name": "React-Native-Typescript-demo-app",
   "version": "1.0.0",
   "description": "Monorepo for testing CI/CD for React Native app.",
-  "repository": "git@ssh.dev.azure.com:v3/masinplayground/Mobile-app-CICD/Mobile-app-CICD",
+  "repository": "git@github.com:polarsquad/mobile-app-rn-demo.git",
   "author": "Masi Malmi <masi.malmi@365.polarsquad.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "api": "yarn workspace @ps/api dev",
+    "background-worker": "yarn workspace @ps/background-worker dev",
+    "start:api": "yarn workspace @ps/api start",
+    "start:background-worker": "yarn workspace @ps/background-worker start",
+    "build:common": "yarn workspace @ps/common build",
+    "build:api": "yarn workspace @ps/api build",
+    "build:background-worker": "yarn workspace @ps/background-worker build"
+  },
   "workspaces": [
-      "common/*",
+      "common",
       "services/*",
       "clients/*"
   ]
