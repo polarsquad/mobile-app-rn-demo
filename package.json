@@ -6,11 +6,9 @@
   "author": "Masi Malmi <masi.malmi@365.polarsquad.com>",
   "license": "MIT",
   "private": true,
-  "workspaces": {
-    "packages": [
+  "workspaces": [
       "common/*",
       "services/*",
       "clients/*"
-    ]
-  }
+  ]
 }
