@@ -1,0 +1,10 @@
+# Connection settings for Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PW=
+
+# Schedule for cron job
+# once a day: 0 0 * * *
+# once an hour: 0 * * * *
+# once a minute: */1 * * * *
+CRON_JOB_SCHEDULE=0 * * * *

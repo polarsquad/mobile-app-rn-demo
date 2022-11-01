@@ -50,15 +50,16 @@ const main = async () => {
 
   // Create a server:
   const app = express();
+  const port = 3000;
 
   // Use those to handle incoming requests:
   app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true,
   }));
-  app.listen(4000);
+  app.listen(port);
 
-  console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+  console.log(`Running a GraphQL API server at http://localhost:${port}/graphql`);
 };
 
 main().catch((error) => {

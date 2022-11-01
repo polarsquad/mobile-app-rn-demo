@@ -10,7 +10,7 @@ yarn
 yarn run react-native doctor
 
 # Run main react-native process
-yarn run start
+yarn run start --reset-cache
 ```
 
 Then, continue in a different shell with the iOS or Android-specific instructions
@@ -35,3 +35,7 @@ Ensure a virtual device has been set up in Android Studio.
 # Run Android emulator
 yarn run android
 ```
+
+## Known issues
+
+- `react-native-dotenv` caches values, use `--reset-cache` flag when starting main react-native process

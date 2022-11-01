@@ -33,8 +33,26 @@ yarn
 
 4. Start the React Native process and iOS and/or Android simulator in separate terminals [as instructed here](./clients/mobile-app/RNTDemoApp/README.md)
 
+### Running from Docker Compose
+
+1. Build containers and spin them up
+
+```
+env BUILD_VERSION=$(git rev-parse --short HEAD) docker-compose up --build
+```
+
+2. Shut down
+
+```
+docker-compose down --remove-orphans
+```
+
 ## Contents of this repository
 
 - [Api service](./services/api)
 - [Mobile client](./clients/mobile-app)
 - [Infrastructure](./infrastructure)
+
+### Known issues with MacOS M1
+
+- Building with Docker Compose: [disable buildkit](https://github.com/docker/compose/issues/8449)

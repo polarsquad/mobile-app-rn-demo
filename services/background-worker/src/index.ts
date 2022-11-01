@@ -9,7 +9,7 @@ import nodeSchedule from 'node-schedule';
 dotenv.config();
 
 const hostname = 'localhost';
-const port = 8000;
+const port = 3002;
 
 const server = http.createServer((req, res) => {
             res.statusCode = 200;

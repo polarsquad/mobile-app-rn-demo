@@ -13,7 +13,7 @@
         "moduleResolution": "node",
         "noImplicitAny": false
     },
-    "include": ["src/**/*"],
+    "include": ["../../common/src/**/*", "src/**/*"],
     "exclude": ["node_modules", "src/**/*.spec.ts"],
     "references": [
       {
