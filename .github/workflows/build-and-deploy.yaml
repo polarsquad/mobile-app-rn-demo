@@ -44,14 +44,7 @@ jobs:
       run: |
         SHORT_SHA=$(git rev-parse --short HEAD)
         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-    - uses: isbang/compose-action@v1.4.0
-      with:
-        compose-file: "./docker-compose.build.yml"
-        up-flags: "--build"
-        down-flags: "--volumes"
-        services: |
-          common
-          api
-          background-worker
+    - name: "Build images using Docker Compose"
+      run: docker-compose build common api background-worker
       env:
         BUILD_VERSION: ${{ steps.vars.outputs.SHORT_SHA }}
