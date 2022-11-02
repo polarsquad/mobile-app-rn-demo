@@ -45,14 +45,23 @@ jobs:
         SHORT_SHA=$(git rev-parse --short HEAD)
         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
     - name: "Build images using Docker Compose"
-      run: docker-compose build common api background-worker
+      run: docker-compose -f docker-compose.build.yml build common api background-worker
       env:
         BUILD_VERSION: ${{ steps.vars.outputs.SHORT_SHA }}
-    - name: Push Docker image to Azure Container Registry
+        DOCKER_REGISTRY: ${{ env.DOCKER_REGISTRY }}
+    - name: "Push Docker images to Azure Container Registry using SHA as tag"
       run: |
         docker tag common:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/common:${{ steps.vars.outputs.SHORT_SHA }}
         docker push ${{ env.DOCKER_REGISTRY }}/common:${{ steps.vars.outputs.SHORT_SHA }}
         docker tag api:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/api:${{ steps.vars.outputs.SHORT_SHA }}
         docker push ${{ env.DOCKER_REGISTRY }}/api:${{ steps.vars.outputs.SHORT_SHA }} 
         docker tag background-worker:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/background-worker:${{ steps.vars.outputs.SHORT_SHA }}
-        docker push ${{ env.DOCKER_REGISTRY }}/background-worker:${{ steps.vars.outputs.SHORT_SHA }}             
+        docker push ${{ env.DOCKER_REGISTRY }}/background-worker:${{ steps.vars.outputs.SHORT_SHA }}
+    - name: "Push Docker images to Azure Container Registry using latest as tag"
+      run: |
+        docker tag common:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/common:latest
+        docker push ${{ env.DOCKER_REGISTRY }}/common:latest
+        docker tag api:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/api:latest
+        docker push ${{ env.DOCKER_REGISTRY }}/api:latest
+        docker tag background-worker:${{ steps.vars.outputs.SHORT_SHA }} ${{ env.DOCKER_REGISTRY }}/background-worker:latest
+        docker push ${{ env.DOCKER_REGISTRY }}/background-worker:latest       

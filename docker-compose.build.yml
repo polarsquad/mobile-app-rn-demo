@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  # Base image containing shared libraries
+  common:
+    build:
+      context: .
+      dockerfile: common/Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+        DOCKER_REGISTRY: $DOCKER_REGISTRY
+      cache_from:
+        - $DOCKER_REGISTRY/common:latest
+    image: common:$BUILD_VERSION
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+        BUILD_CONTEXT: api
+        DOCKER_REGISTRY: $DOCKER_REGISTRY
+      cache_from:
+        - $DOCKER_REGISTRY/api:latest
+    image: api:$BUILD_VERSION
+    depends_on:
+      - common
+    ports:
+      - 3000:3000
+  background-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_VERSION: $BUILD_VERSION
+        BUILD_CONTEXT: background-worker
+        DOCKER_REGISTRY: $DOCKER_REGISTRY
+      cache_from:
+        - $DOCKER_REGISTRY/background-worker:latest
+    image: background-worker:$BUILD_VERSION
+    depends_on:
+      - common
+    environment:
+      CRON_JOB_SCHEDULE: "0 * * * *"
+    ports:
+      - 3002:3002
