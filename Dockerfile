@@ -6,8 +6,8 @@ ENV SERVICE=$BUILD_CONTEXT
 
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
+COPY package.json yarn.lock ./
+RUN true
 COPY ./services/$BUILD_CONTEXT/package.json services/$BUILD_CONTEXT/
 
 RUN yarn install --ignore-scripts --frozen-lockfile --non-interactive \

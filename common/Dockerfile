@@ -3,8 +3,8 @@ FROM node:16.17.0-bullseye-slim
 
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
+COPY package.json yarn.lock ./
+RUN true
 COPY common/package.json common/yarn.lock common/
 
 RUN yarn install --ignore-scripts --frozen-lockfile --non-interactive \
