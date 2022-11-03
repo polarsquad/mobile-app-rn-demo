@@ -12,32 +12,26 @@ const hostname = 'localhost';
 const port = 3002;
 
 const server = http.createServer((req, res) => {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'text/plain');
-            res.end('Background worker\n');
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  return res.end('Background worker\n');
 });
 
 server.listen(port, hostname, () => {
-            console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 const parser = new Parser({
-    customFields: {
-      item: [
-        ['content:encoded', 'contentEncoded'],
-      ]
-    }
-  });
+  customFields: {
+    item: [
+      ['content:encoded', 'contentEncoded'],
+    ]
+  }
+});
 
 const SaveBlogs = async () => {
 
   const feed = await parser.parseURL('https://medium.com/feed/polarsquad');
-  //console.log(feed.title);
-  
-  //console.log(process.env.REDIS_HOST);
-  //console.log(process.env.REDIS_PORT);
-  //console.log(process.env.REDIS_PWD);
-
   const blogAttrs = [];
 
   feed.items.forEach(async item => {
@@ -52,7 +46,7 @@ const SaveBlogs = async () => {
 const parseItem = (item): CreateBlogAttrs => {
   const imgSources = item.contentEncoded.match(/<img [^>]*src="[^"]*"[^>]*>/gm)
     .map(x => x.replace(/.*src="([^"]*)".*/, '$1'));
-    const imageUrl = imgSources[0];
+  const imageUrl = imgSources[0];
 
   return {
     title: item.title,
