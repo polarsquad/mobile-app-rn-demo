@@ -53,3 +53,10 @@ az acr create \
   --name $ACR_NAME \
   --location $LOCATION \
   --sku Basic
+
+ACR_ID=$(az acr show -n $ACR_NAME --query id -o tsv)
+
+az role assignment create \
+    --assignee $AZURE_CLIENT_ID \
+    --role "User Access Administrator" \
+    --scope $ACR_ID
