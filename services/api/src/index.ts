@@ -52,6 +52,11 @@ const main = async () => {
   const app = express();
   const port = 3000;
 
+  // Handle requests to root
+  app.get('/', (_req, res) => {
+    return res.sendStatus(200);
+  })
+
   // Use those to handle incoming requests:
   app.use('/graphql', graphqlHTTP({
     schema,
