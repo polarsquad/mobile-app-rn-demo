@@ -9,6 +9,7 @@ REDIS_NAME="redis-rntdemoapp"
 LOCATION="westeurope"
 EXTERNAL_SERVICE_NAME="api"
 INTERNAL_SERVICE_NAME="background-worker"
+IMAGE_TAG=$1
 
 az group create -n $RESOURCE_GROUP -l $LOCATION -o none
 
@@ -77,7 +78,7 @@ az containerapp create \
   --name "aca-rntdemoapp-$INTERNAL_SERVICE_NAME" \
   --resource-group $RESOURCE_GROUP \
   --environment $ENVIRONMENT \
-  --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:latest \
+  --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:$IMAGE_TAG \
   --target-port 3002 \
   --ingress 'internal' \
   --cpu 0.25 \
@@ -94,7 +95,7 @@ az containerapp create \
   --name "aca-rntdemoapp-$EXTERNAL_SERVICE_NAME" \
   --resource-group $RESOURCE_GROUP \
   --environment $ENVIRONMENT \
-  --image $ACR_NAME.azurecr.io/$EXTERNAL_SERVICE_NAME:latest \
+  --image $ACR_NAME.azurecr.io/$EXTERNAL_SERVICE_NAME:$IMAGE_TAG \
   --target-port 3000 \
   --ingress 'external' \
   --cpu 0.5 \
