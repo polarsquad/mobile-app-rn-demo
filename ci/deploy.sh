@@ -84,7 +84,7 @@ az containerapp create \
   --cpu 0.25 \
   --memory 0.5Gi \
   --min-replicas 1 \
-  --max-replicas 4 \
+  --max-replicas 1 \
   --user-assigned $WORKER_IDENTITY_ID \
   --registry-identity $WORKER_IDENTITY_ID \
   --secrets redispwd=$REDIS_PWD \
@@ -100,6 +100,7 @@ az containerapp create \
   --ingress 'external' \
   --cpu 0.5 \
   --memory 1.0Gi \
+  --min-replicas 1 \
   --max-replicas 6 \
   --scale-rule-name my-http-rule \
   --scale-rule-http-concurrency 10 \
