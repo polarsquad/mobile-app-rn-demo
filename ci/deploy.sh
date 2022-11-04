@@ -99,10 +99,11 @@ az containerapp create \
   --ingress 'external' \
   --cpu 0.5 \
   --memory 1.0Gi \
-  --max-replicas 4 \
+  --max-replicas 6 \
+  --scale-rule-name my-http-rule \
+  --scale-rule-http-concurrency 10 \
   --user-assigned $API_IDENTITY_ID \
   --registry-identity $API_IDENTITY_ID \
   --secrets redispwd=$REDIS_PWD \
   --env-vars REDIS_HOST=$REDIS_HOST REDIS_PORT=6379 REDIS_PW=secretref:redispwd \
   --registry-server $ACR_NAME.azurecr.io
-
