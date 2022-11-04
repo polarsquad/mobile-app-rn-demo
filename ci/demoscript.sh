@@ -5,7 +5,6 @@ APP_NAME="RNTDemoApp"
 RESOURCE_GROUP="rg-rntdemoapp-ci"
 ACR_NAME="acrrntdemoapp"
 LOCATION="westeurope" # azure region
-#GHUSER="Masahigo" # replace with your GitHub user name
 GHREPO="polarsquad/mobile-app-rn-demo" # here the repo name
 AZURE_SUBSCRIPTION_ID="72216f92-4084-4948-bdcd-a6962e1ec38c" # dotnetMalaga demo
 AZURE_TENANT_ID="34af557e-1fa3-4d33-a3a6-861c6df23469" # masimalmihotmail.onmicrosoft.com
@@ -37,15 +36,6 @@ EOF
 
 az ad app federated-credential create --id $AZURE_CLIENT_OBJECT_ID --parameters credentials.json
 
-# Configure Github secrets to the repository (manually)
-# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#create-github-secrets
-
-echo "-- Configure in Github secrets --"
-echo "AZURE_CLIENT_ID: $AZURE_CLIENT_ID"
-echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
-echo "AZURE_SUBSCRIPTION_ID: $AZURE_SUBSCRIPTION_ID"
-echo "--"
-
 # Create Azure Container Registry
 
 az acr create \
@@ -60,3 +50,13 @@ az role assignment create \
     --assignee $AZURE_CLIENT_ID \
     --role "User Access Administrator" \
     --scope $ACR_ID
+
+
+# Configure Github secrets to the repository (manually)
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#create-github-secrets
+
+echo "-- Configure in Github secrets --"
+echo "AZURE_CLIENT_ID: $AZURE_CLIENT_ID"
+echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
+echo "AZURE_SUBSCRIPTION_ID: $AZURE_SUBSCRIPTION_ID"
+echo "--"
