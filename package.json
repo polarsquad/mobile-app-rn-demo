@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Monorepo for testing CI/CD for React Native app.",
   "repository": "git@github.com:polarsquad/mobile-app-rn-demo.git",
-  "author": "Masi Malmi <masi.malmi@365.polarsquad.com>",
+  "author": "Polar Squad",
   "license": "MIT",
   "private": true,
   "scripts": {
