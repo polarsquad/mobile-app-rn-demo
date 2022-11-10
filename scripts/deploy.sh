@@ -72,40 +72,65 @@ API_IDENTITY_ID=`az identity show \
   --resource-group $RESOURCE_GROUP \
   --query id -o tsv`
 
-# Deploy initial Container Apps
+# Deploy Container Apps
+# Check if already exists - in which case deploy new revision
 
-az containerapp create \
-  --name "aca-rntdemoapp-$INTERNAL_SERVICE_NAME" \
-  --resource-group $RESOURCE_GROUP \
-  --environment $ENVIRONMENT \
-  --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:$IMAGE_TAG \
-  --target-port 3002 \
-  --ingress 'internal' \
-  --cpu 0.25 \
-  --memory 0.5Gi \
-  --min-replicas 1 \
-  --max-replicas 1 \
-  --user-assigned $WORKER_IDENTITY_ID \
-  --registry-identity $WORKER_IDENTITY_ID \
-  --secrets redispwd=$REDIS_PWD \
-  --env-vars REDIS_HOST=$REDIS_HOST REDIS_PORT=6379 REDIS_PW=secretref:redispwd CRON_JOB_SCHEDULE="*/5 * * * *" \
-  --registry-server $ACR_NAME.azurecr.io
+CONTAINER_APP_INTERNAL_NAME=$ENVIRONMENT-$INTERNAL_SERVICE_NAME
+CONTAINER_APP_INTERNAL_ID=$(az containerapp list --environment $ENVIRONMENT --resource-group $RESOURCE_GROUP --query "[?contains(name, '$CONTAINER_APP_INTERNAL_NAME')].id" -o tsv)
+if [ -z "$CONTAINER_APP_INTERNAL_ID" ]; then
+    echo "Deploy initial revision for container app $CONTAINER_APP_INTERNAL_NAME"
+    
+    az containerapp create \
+    --name $CONTAINER_APP_INTERNAL_NAME \
+    --resource-group $RESOURCE_GROUP \
+    --environment $ENVIRONMENT \
+    --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:$IMAGE_TAG \
+    --target-port 3002 \
+    --ingress 'internal' \
+    --cpu 0.25 \
+    --memory 0.5Gi \
+    --min-replicas 1 \
+    --max-replicas 1 \
+    --user-assigned $WORKER_IDENTITY_ID \
+    --registry-identity $WORKER_IDENTITY_ID \
+    --secrets redispwd=$REDIS_PWD \
+    --env-vars REDIS_HOST=$REDIS_HOST REDIS_PORT=6379 REDIS_PW=secretref:redispwd CRON_JOB_SCHEDULE="*/5 * * * *" \
+    --registry-server $ACR_NAME.azurecr.io
+else
+    echo "Deploy new revision for container app $CONTAINER_APP_INTERNAL_NAME"
+    az containerapp update \
+    --name $CONTAINER_APP_INTERNAL_NAME \
+    --resource-group $RESOURCE_GROUP \
+    --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:$IMAGE_TAG
+fi
 
-az containerapp create \
-  --name "aca-rntdemoapp-$EXTERNAL_SERVICE_NAME" \
-  --resource-group $RESOURCE_GROUP \
-  --environment $ENVIRONMENT \
-  --image $ACR_NAME.azurecr.io/$EXTERNAL_SERVICE_NAME:$IMAGE_TAG \
-  --target-port 3000 \
-  --ingress 'external' \
-  --cpu 0.5 \
-  --memory 1.0Gi \
-  --min-replicas 1 \
-  --max-replicas 6 \
-  --scale-rule-name my-http-rule \
-  --scale-rule-http-concurrency 10 \
-  --user-assigned $API_IDENTITY_ID \
-  --registry-identity $API_IDENTITY_ID \
-  --secrets redispwd=$REDIS_PWD \
-  --env-vars REDIS_HOST=$REDIS_HOST REDIS_PORT=6379 REDIS_PW=secretref:redispwd \
-  --registry-server $ACR_NAME.azurecr.io
+CONTAINER_APP_EXTERNAL_NAME=$ENVIRONMENT-$EXTERNAL_SERVICE_NAME
+CONTAINER_APP_EXTERNAL_ID=$(az containerapp list --environment $ENVIRONMENT --resource-group $RESOURCE_GROUP --query "[?contains(name, '$CONTAINER_APP_EXTERNAL_NAME')].id" -o tsv)
+if [ -z "$CONTAINER_APP_EXTERNAL_ID" ]; then
+    echo "Deploy initial revision for container app $CONTAINER_APP_EXTERNAL_NAME"
+    
+    az containerapp create \
+    --name $CONTAINER_APP_EXTERNAL_NAME \
+    --resource-group $RESOURCE_GROUP \
+    --environment $ENVIRONMENT \
+    --image $ACR_NAME.azurecr.io/$EXTERNAL_SERVICE_NAME:$IMAGE_TAG \
+    --target-port 3000 \
+    --ingress 'external' \
+    --cpu 0.5 \
+    --memory 1.0Gi \
+    --min-replicas 1 \
+    --max-replicas 6 \
+    --scale-rule-name my-http-rule \
+    --scale-rule-http-concurrency 10 \
+    --user-assigned $API_IDENTITY_ID \
+    --registry-identity $API_IDENTITY_ID \
+    --secrets redispwd=$REDIS_PWD \
+    --env-vars REDIS_HOST=$REDIS_HOST REDIS_PORT=6379 REDIS_PW=secretref:redispwd \
+    --registry-server $ACR_NAME.azurecr.io
+else
+    echo "Deploy new revision for container app $CONTAINER_APP_EXTERNAL_NAME"
+    az containerapp update \
+    --name $CONTAINER_APP_EXTERNAL_NAME \
+    --resource-group $RESOURCE_GROUP \
+    --image $ACR_NAME.azurecr.io/$EXTERNAL_SERVICE_NAME:$IMAGE_TAG
+fi
