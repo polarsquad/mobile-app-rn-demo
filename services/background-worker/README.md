@@ -1,4 +1,6 @@
-# API service
+# Background worker
+
+This service reads an RSS feed from medium.com and writes the items to Redis using the blogs data structure.
 
 ## Get started
 

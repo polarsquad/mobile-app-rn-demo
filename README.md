@@ -7,9 +7,8 @@
 ### Install missing prerequisites if neccessary
 
 1. Install Node.js and Yarn
-2. Install [PM2](https://poopcode.com/node-js-app-pm2-process-manager/)
-3. Install XCode from the AppStore
-4. Install the [required tools](./clients/mobile-app/RNTDemoApp/README.md) for running the mobile app locally
+2. Install XCode from the AppStore (for iOS)
+3. Install the [required tools](./clients/mobile-app/RNTDemoApp/README.md) for running the mobile app locally
 
 ### Running locally
 
@@ -41,7 +40,7 @@ yarn
 env BUILD_VERSION=$(git rev-parse --short HEAD) docker-compose up --build
 ```
 
-2. Shut down
+2. Ramp down
 
 ```
 docker-compose down --remove-orphans
@@ -53,6 +52,12 @@ docker-compose down --remove-orphans
 - [Mobile client](./clients/mobile-app)
 - [Infrastructure](./infrastructure)
 
-### Known issues with MacOS M1
+### Known issues
+
+#### MacOS M1 
 
 - Building with Docker Compose: [disable buildkit](https://github.com/docker/compose/issues/8449)
+
+#### Android simulator
+
+- The `API_URL` configured in `clients/mobile-app/RNTDemoApp/.env` needs to point to your local IP address like `192.168.x.x` when testing through Docker Compose, with `localhost` the app fails to connect to the GraphQL endpoint

@@ -17,8 +17,15 @@ chmod +x deploy.sh
 3. Check that API is returning data
 
 ```
-curl -i https://<FQDN-OF-API-IN-ACA>/graphql?query=%7BblogCount%7D
+API_FQDN=$(az containerapp show \
+  --resource-group rg-rntdemoapp \
+  --name aca-rntdemoapp-api \
+  --query properties.configuration.ingress.fqdn -o tsv)
+  
+curl -i https://$API_FQDN/graphql?query=%7BblogCount%7D
 ```
+
+**If it's not returning data (blogCount: 0), restart it's revision and check again**
 
 4. Clean up the whole setup
 

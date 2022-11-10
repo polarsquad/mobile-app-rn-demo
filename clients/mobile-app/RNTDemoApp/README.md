@@ -13,7 +13,15 @@ yarn run react-native doctor
 yarn run start --reset-cache
 ```
 
-Then, continue in a different shell with the iOS or Android-specific instructions
+_Then, continue in a different shell with the iOS or Android-specific instructions_
+
+## Environment configuration
+
+The `API_URL` is passed to the mobile app via environment variable. For local development, this can be configured using a file called `.env` in the app's root (this directory). By design, this file is not included in the version control so you'll have to create it yourself.
+
+```sh
+cp env-template .env
+```
 
 ### For iOS
 
