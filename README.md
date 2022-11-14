@@ -18,16 +18,18 @@
 yarn
 ```
 
-2. Start the backend service (GraphQL API)
-
-```
-(cd services/api && yarn run dev)
-```
-
-3. Start the background worker service (NodeJS app)
+2. Start the background worker service (NodeJS app)
 
 ```
 (cd services/background-worker && yarn run dev)
+```
+
+    Let it fetch and store some data before starting the API
+
+3. Start the backend service (GraphQL API)
+
+```
+(cd services/api && yarn run dev)
 ```
 
 4. Start the React Native process and iOS and/or Android simulator in separate terminals [as instructed here](./clients/mobile-app/RNTDemoApp/README.md)
@@ -49,8 +51,10 @@ docker-compose down --remove-orphans
 ## Contents of this repository
 
 - [Api service](./services/api)
+- [Background service](./services/background-worker)
+- [Common library](./common)
 - [Mobile client](./clients/mobile-app)
-- [Infrastructure](./infrastructure)
+- [Deployment](./deployment)
 
 ### Known issues
 
@@ -61,3 +65,10 @@ docker-compose down --remove-orphans
 #### Android simulator
 
 - The `API_URL` configured in `clients/mobile-app/RNTDemoApp/.env` needs to point to your local IP address like `192.168.x.x` when testing through Docker Compose, with `localhost` the app fails to connect to the GraphQL endpoint
+
+## CI/CD
+
+There's a single [Github Action](.github/workflows/build-and-deploy.yaml) that both builds the Docker images (through Docker Compose) and then deploys the services to Azure Container Apps Environment. The `docker-compose.build.yml` is reserved for the CI process.
+
+![alt text](deployment/images/ci-flow.png "Services CI flow")
+![alt text](deployment/images/cd-flow.png "Services CD flow")
