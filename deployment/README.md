@@ -19,7 +19,7 @@ RAND=$(openssl rand -base64 6 | awk '{print tolower($0)}')
 
 ```bash
 chmod +x setup.sh
-LOCATION="westeurope"
+LOCATION="germanywestcentral"
 GHREPO="polarsquad/mobile-app-rn-demo"
 
 az login
@@ -32,7 +32,6 @@ DEFAULT_AZURE_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
 ```bash
 chmod +x deploy.sh
-LOCATION="germanywestcentral"
 
 ./deploy.sh $RAND $LOCATION latest
 ```
@@ -42,12 +41,9 @@ LOCATION="germanywestcentral"
 4. Check that API is returning data
 
 ```
-API_FQDN=$(az containerapp show \
-  --resource-group rg-rntdemoapp \
-  --name aca-rntdemoapp-api \
-  --query properties.configuration.ingress.fqdn -o tsv)
+API_FQDN=$(az containerapp list --environment aca-rntdemoapp-$RAND --query "[?contains(name, 'api')].properties.configuration.ingress.fqdn" -o tsv)
   
-curl -i https://$API_FQDN/graphql?query=%7BblogCount%7D
+curl -i "https://$API_FQDN/graphql?query=%7BblogCount%7D"
 ```
 
 **If it's not returning data (blogCount: 0), restart it's revision and check again**
