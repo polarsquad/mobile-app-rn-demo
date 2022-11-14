@@ -35,14 +35,14 @@ az containerapp env create \
 
 ACR_ID=$(az acr show -n $ACR_NAME -g "rg-rntdemoapp-$1-ci" --query id -o tsv)
 
-EXTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$EXTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
+EXTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$1-$EXTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
 az role assignment create \
     --assignee-object-id $EXTERNAL_SERVICE_IDENTITY_ID \
     --assignee-principal-type ServicePrincipal \
     --role AcrPull \
     --scope $ACR_ID
 
-INTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$INTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
+INTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$1-$INTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
 az role assignment create \
     --assignee-object-id $INTERNAL_SERVICE_IDENTITY_ID \
     --assignee-principal-type ServicePrincipal \
