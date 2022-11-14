@@ -8,7 +8,7 @@ LAW_NAME="law-rntdemoapp-$1"
 REDIS_NAME="redis-rntdemoapp-$1"
 LOCATION=$2
 EXTERNAL_SERVICE_NAME="api"
-INTERNAL_SERVICE_NAME="background-worker"
+INTERNAL_SERVICE_NAME="worker"
 IMAGE_TAG=$3
 
 az group create -n $RESOURCE_GROUP -l $LOCATION -o none
@@ -84,7 +84,7 @@ if [ -z "$CONTAINER_APP_INTERNAL_ID" ]; then
     --name $CONTAINER_APP_INTERNAL_NAME \
     --resource-group $RESOURCE_GROUP \
     --environment $ENVIRONMENT \
-    --image $ACR_NAME.azurecr.io/$INTERNAL_SERVICE_NAME:$IMAGE_TAG \
+    --image $ACR_NAME.azurecr.io/background-worker:$IMAGE_TAG \
     --target-port 3002 \
     --ingress 'internal' \
     --cpu 0.25 \
