@@ -1,29 +1,29 @@
 #!/bin/bash
 set -ex
 
-ENVIRONMENT="aca-rntdemoapp" 
-RESOURCE_GROUP="rg-rntdemoapp"
-ACR_NAME="acrrntdemoapp"
-LAW_NAME="law-rntdemoapp"
-REDIS_NAME="redis-rntdemoapp"
-LOCATION="germanywestcentral"
+ENVIRONMENT="aca-rntdemoapp-$1" 
+RESOURCE_GROUP="rg-rntdemoapp-$1"
+ACR_NAME="acrrntdemoapp$1"
+LAW_NAME="law-rntdemoapp-$1"
+REDIS_NAME="redis-rntdemoapp-$1"
+LOCATION=$2
 EXTERNAL_SERVICE_NAME="api"
 INTERNAL_SERVICE_NAME="background-worker"
-IMAGE_TAG=$1
+IMAGE_TAG=$3
 
 az group create -n $RESOURCE_GROUP -l $LOCATION -o none
 
 az monitor log-analytics workspace create -g $RESOURCE_GROUP -n $LAW_NAME -l $LOCATION
 
-LAW_ID=$(az monitor log-analytics workspace show -g $RESOURCE_GROUP -n $LAW_NAME --query customerId -o tsv)
-LAW_KEY=$(az monitor log-analytics workspace get-shared-keys -g $RESOURCE_GROUP -n $LAW_NAME --query primarySharedKey -o tsv)
+LAW_ID=$(az monitor log-analytics workspace show -g $RESOURCE_GROUP -n $LAW_NAME --query customerId -o tsv --only-show-errors)
+LAW_KEY=$(az monitor log-analytics workspace get-shared-keys -g $RESOURCE_GROUP -n $LAW_NAME --query primarySharedKey -o tsv --only-show-errors)
 
 az identity create \
---name "id-rntdemoapp-$EXTERNAL_SERVICE_NAME" \
+--name "id-rntdemoapp-$1-$EXTERNAL_SERVICE_NAME" \
 --resource-group $RESOURCE_GROUP
 
 az identity create \
---name "id-rntdemoapp-$INTERNAL_SERVICE_NAME" \
+--name "id-rntdemoapp-$1-$INTERNAL_SERVICE_NAME" \
 --resource-group $RESOURCE_GROUP
 
 az containerapp env create \
@@ -33,16 +33,16 @@ az containerapp env create \
   --logs-workspace-key $LAW_KEY \
   --location "$LOCATION"
 
-ACR_ID=$(az acr show -n $ACR_NAME --query id -o tsv)
+ACR_ID=$(az acr show -n $ACR_NAME -g "rg-rntdemoapp-$1-ci" --query id -o tsv)
 
-EXTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$EXTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv)
+EXTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$EXTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
 az role assignment create \
     --assignee-object-id $EXTERNAL_SERVICE_IDENTITY_ID \
     --assignee-principal-type ServicePrincipal \
     --role AcrPull \
     --scope $ACR_ID
 
-INTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$INTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv)
+INTERNAL_SERVICE_IDENTITY_ID=$(az identity show --name "id-rntdemoapp-$INTERNAL_SERVICE_NAME" --resource-group $RESOURCE_GROUP --query principalId -o tsv --only-show-errors)
 az role assignment create \
     --assignee-object-id $INTERNAL_SERVICE_IDENTITY_ID \
     --assignee-principal-type ServicePrincipal \
@@ -60,15 +60,15 @@ az redis create  \
 --enable-non-ssl-port  
 
 REDIS_HOST=$(az redis show -n $REDIS_NAME -g $RESOURCE_GROUP --query hostName -o tsv)
-REDIS_PWD=$(az redis list-keys -n $REDIS_NAME -g $RESOURCE_GROUP --query primaryKey -o tsv)
+REDIS_PWD=$(az redis list-keys -n $REDIS_NAME -g $RESOURCE_GROUP --query primaryKey -o tsv --only-show-errors)
 
 WORKER_IDENTITY_ID=`az identity show \
-  --name "id-rntdemoapp-$INTERNAL_SERVICE_NAME" \
+  --name "id-rntdemoapp-$1-$INTERNAL_SERVICE_NAME" \
   --resource-group $RESOURCE_GROUP \
   --query id -o tsv`
 
 API_IDENTITY_ID=`az identity show \
-  --name "id-rntdemoapp-$EXTERNAL_SERVICE_NAME" \
+  --name "id-rntdemoapp-$1-$EXTERNAL_SERVICE_NAME" \
   --resource-group $RESOURCE_GROUP \
   --query id -o tsv`
 

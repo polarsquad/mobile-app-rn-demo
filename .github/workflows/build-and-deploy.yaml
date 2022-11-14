@@ -3,10 +3,9 @@ on:
   push:
     branches: [master]
     paths-ignore:
-      - "README.md"
-      - "scripts/**"
+      - "**/README.md"
+      - "deployment/**"
       - "clients/**"
-      - "services/api/README.md"
       - "docker-compose.yml"
 
   # Allows you to run this workflow manually from the Actions tab
@@ -17,8 +16,10 @@ permissions:
   id-token: write
   contents: read
 
+# RANDOM_STRING needs to be unique
 env:
-  DOCKER_REGISTRY: "acrrntdemoapp.azurecr.io"
+  DOCKER_REGISTRY: '${{ secrets.DOCKER_REGISTRY }}'
+  RANDOM_STRING: '${{ secrets.RANDOM_STRING }}'
  
 jobs: 
   build:
@@ -93,4 +94,4 @@ jobs:
         azcliversion: 2.42.0
         inlineScript: |  
           az config set extension.use_dynamic_install=yes_without_prompt
-          bash ${GITHUB_WORKSPACE}/scripts/deploy.sh ${{ steps.vars.outputs.SHORT_SHA }}
+          bash ${GITHUB_WORKSPACE}/deployment/deploy.sh ${{ env.RANDOM_STRING }} germanywestcentral ${{ steps.vars.outputs.SHORT_SHA }}

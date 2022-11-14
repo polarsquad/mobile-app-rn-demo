@@ -1,16 +1,12 @@
 #!/bin/bash
 set -ex
 
-APP_NAME="RNTDemoApp" 
-RESOURCE_GROUP="rg-rntdemoapp-ci"
-ACR_NAME="acrrntdemoapp"
-LOCATION="westeurope" # azure region
-GHREPO="polarsquad/mobile-app-rn-demo" # here the repo name
-AZURE_SUBSCRIPTION_ID="72216f92-4084-4948-bdcd-a6962e1ec38c" # dotnetMalaga demo
-AZURE_TENANT_ID="34af557e-1fa3-4d33-a3a6-861c6df23469" # masimalmihotmail.onmicrosoft.com
-
-az login -t $AZURE_TENANT_ID
-az account set -s $AZURE_SUBSCRIPTION_ID
+APP_NAME="RNTDemoApp$1"
+RESOURCE_GROUP="rg-rntdemoapp-$1-ci"
+ACR_NAME="acrrntdemoapp$1"
+LOCATION=$2
+GHREPO=$3 # Github repo where Federated identity is used
+AZURE_SUBSCRIPTION_ID=$4
 
 az group create -n $RESOURCE_GROUP -l $LOCATION -o none
 
@@ -34,7 +30,10 @@ cat <<EOF > credentials.json
 }
 EOF
 
-az ad app federated-credential create --id $AZURE_CLIENT_OBJECT_ID --parameters credentials.json
+EXISTS=$(az ad app federated-credential list --id $AZURE_CLIENT_OBJECT_ID)
+if [ -z "$EXISTS" ]; then
+    az ad app federated-credential create --id $AZURE_CLIENT_OBJECT_ID --parameters credentials.json
+fi
 
 # Create Azure Container Registry
 
@@ -56,7 +55,9 @@ az role assignment create \
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#create-github-secrets
 
 echo "-- Configure in Github secrets --"
+echo "DOCKER_REGISTRY: $ACR_NAME.azurecr.io"
 echo "AZURE_CLIENT_ID: $AZURE_CLIENT_ID"
-echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
 echo "AZURE_SUBSCRIPTION_ID: $AZURE_SUBSCRIPTION_ID"
+echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
+echo "RANDOM_STRING: $1"
 echo "--"
