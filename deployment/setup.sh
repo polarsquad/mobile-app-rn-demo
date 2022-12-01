@@ -31,7 +31,7 @@ cat <<EOF > credentials.json
 EOF
 
 EXISTS=$(az ad app federated-credential list --id $AZURE_CLIENT_OBJECT_ID)
-if [ -z "$EXISTS" ]; then
+if [[ "$EXISTS" == "[]" ]]; then
     az ad app federated-credential create --id $AZURE_CLIENT_OBJECT_ID --parameters credentials.json
 fi
 
